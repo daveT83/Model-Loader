@@ -1,0 +1,5 @@
+C:\Users\davet\source\repos\Model Loader\Model Loader\bin\Debug\Model Loader.dll
+C:\Users\davet\source\repos\Model Loader\Model Loader\bin\Debug\Model Loader.pdb
+C:\Users\davet\source\repos\Model Loader\Model Loader\obj\Debug\Model Loader.csproj.CoreCompileInputs.cache
+C:\Users\davet\source\repos\Model Loader\Model Loader\obj\Debug\Model Loader.dll
+C:\Users\davet\source\repos\Model Loader\Model Loader\obj\Debug\Model Loader.pdb
