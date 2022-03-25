@@ -45,5 +45,22 @@ namespace Model_Loader_Examples.Examples
 
 
         }
+
+        public static Dictionary<string, string> GetDictionaryFromModel(ExampleModel model)
+        {
+            //Load the values into the dictionary
+            TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
+                                                                //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
+
+            return DictionaryCreator.CreateFromModel(model, model.GetType(), typeConverter.GetType(), typeConverter);
+        }
+
+        public static void WriteToFile(string filePath, char delimeter, List<ExampleModel> models)
+        {
+            TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
+                                                                //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
+
+            GenerateFlatFile.WriteToFile(filePath, delimeter, typeConverter, models, models[0].GetType(), typeConverter.GetType(), isHaveHeaders:true, isHaveQuotes:true);
+        }
     }
 }
