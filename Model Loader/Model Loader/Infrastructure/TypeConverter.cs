@@ -70,6 +70,37 @@ namespace Model_Loader.Infrastructure
         }
 
         /// <summary>
+        /// Converts from a type to string
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="parentClass"></param>
+        /// <returns></returns>
+        public string ConvertFromType(dynamic value, Type type, Type parentClass)
+        {
+            if (value == null)
+            {
+                return "";
+            }
+            else
+            {
+                MethodInfo[] methodInfos = TrimMethodInfos(parentClass.GetMethods());
+
+                if (!typeof(String).Equals(value.GetType()))
+                {
+                    foreach (MethodInfo methodInfo in methodInfos)
+                    {
+                        if (methodInfo.GetParameters()[0].ParameterType.Equals(value.GetType()))
+                        {
+                            return methodInfo.Invoke(Activator.CreateInstance(parentClass), new object[] { value }).ToString();
+                        }
+                    }
+                }
+                return value;
+            }
+        }
+
+        /// <summary>
         /// Strips out unwanted methods
         /// </summary>
         /// <param name="methodInfos"></param>
@@ -142,6 +173,76 @@ namespace Model_Loader.Infrastructure
         public ushort ConvertToUshort(string value)
         {
             return UInt16.Parse(value);
+        }
+
+        public string ConvertFromBool(bool value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromByteArray(byte[] value)
+        {
+            return String.Join("", value);
+        }
+
+        public string ConvertFromCharArray(char[] value)
+        {
+            string chars = "";
+
+            foreach (char c in value)
+            {
+                chars += c;
+            }
+            return chars;
+        }
+
+        public string ConvertFromChar(char value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromDecimal(decimal value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromDouble(double value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromFloat(float value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromInt(int value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromUint(uint value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromLong(long value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromUlong(ulong value)
+        {
+            return Convert.ToString(value);
+        }
+        public string ConvertFromShort(short value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public string ConvertFromUshort(ushort value)
+        {
+            return Convert.ToString(value);
         }
     }
 }

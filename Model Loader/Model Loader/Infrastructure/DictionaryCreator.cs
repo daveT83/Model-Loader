@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Model_Loader.Infrastructure
 {
@@ -113,6 +111,28 @@ namespace Model_Loader.Infrastructure
             }
 
             return dictionaries;
+        }
+
+        /// <summary>
+        /// Creates a dictionary from a model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="type"></param>
+        /// <param name="parentclass"></param>
+        /// <param name="typeConverter"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> CreateFromModel(Object model, Type type, Type parentclass, TypeConverter typeConverter)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            PropertyInfo[] properties = type.GetProperties();
+
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, parentclass));
+            }
+
+            return dict;
         }
 
         /// <summary>

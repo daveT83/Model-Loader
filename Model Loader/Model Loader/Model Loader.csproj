@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\DictionaryCreator.cs" />
+    <Compile Include="Infrastructure\GenerateFlatFile.cs" />
     <Compile Include="Infrastructure\ModelLoader.cs" />
     <Compile Include="Infrastructure\TypeConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
