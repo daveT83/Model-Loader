@@ -56,6 +56,15 @@ namespace Model_Loader.Infrastructure
             }
         }
 
+        private string GetValue(string value)
+        {
+            if (value.ToLower().Equals("null"))
+            {
+                return null;
+            }
+            return value;
+        }
+
         /// <summary>
         /// Sets the value for a given field
         /// </summary>
