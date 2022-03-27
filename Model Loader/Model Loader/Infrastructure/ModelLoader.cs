@@ -47,20 +47,20 @@ namespace Model_Loader.Infrastructure
             {
                 if (IsCaseSensitive && propertyInfo.Name.Equals(element.Key))
                 {
-                    SetValue(propertyInfo, model, propertyInfo.PropertyType, element.Value);
+                    SetValue(propertyInfo, model, propertyInfo.PropertyType, GetValue(element.Value));
                 }
                 else if (!IsCaseSensitive && propertyInfo.Name.ToLower().Equals(element.Key.ToLower()))
                 {
-                    SetValue(propertyInfo, model, propertyInfo.PropertyType, element.Value);
+                    SetValue(propertyInfo, model, propertyInfo.PropertyType, GetValue(element.Value));
                 }
             }
         }
 
         private string GetValue(string value)
         {
-            if (value.ToLower().Equals("null"))
+            if (value.ToLower().Equals("null") || String.IsNullOrWhiteSpace(value) || String.IsNullOrEmpty(value))
             {
-                return "";
+                return null;
             }
             return value;
         }
