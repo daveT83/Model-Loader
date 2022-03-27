@@ -60,7 +60,7 @@ namespace Model_Loader.Infrastructure
         {
             if (value.ToLower().Equals("null"))
             {
-                return null;
+                return "";
             }
             return value;
         }
