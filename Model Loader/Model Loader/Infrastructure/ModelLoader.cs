@@ -56,6 +56,11 @@ namespace Model_Loader.Infrastructure
             }
         }
 
+        /// <summary>
+        /// defaults a value to null if it isn't present
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private string GetValue(string value)
         {
             if (value.ToLower().Equals("null") || String.IsNullOrWhiteSpace(value) || String.IsNullOrEmpty(value))

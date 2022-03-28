@@ -129,7 +129,14 @@ namespace Model_Loader.Infrastructure
 
             foreach (PropertyInfo propertyInfo in properties)
             {
-                dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, parentclass));
+                if (propertyInfo.GetValue(model) == null)
+                {
+                    dict.Add(propertyInfo.Name, "");
+                }
+                else
+                {
+                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, parentclass));
+                }
             }
 
             return dict;
