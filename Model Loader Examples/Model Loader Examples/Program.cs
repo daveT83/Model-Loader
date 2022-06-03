@@ -17,7 +17,7 @@ namespace Model_Loader_Examples
             {
                 //Load from Arguements
                 string delimeter = "++---++";
-                string[] exampleArgs = { "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "char array test", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33","ListExample"+delimeter+"1,1,2,2,3,4,5,6" };
+                string[] exampleArgs = { "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "char array test", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33","ListExample"+delimeter+"1,1,2,2,3,4,5,6","DateTimeExample"+delimeter+"01/02/2022" };
                 ExampleModel exampleModelArguements = Example.LoadFromArguemnts(exampleArgs, delimeter);
 
                 //--------------------------------------------------------------------------------------------------------------------
