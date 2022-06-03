@@ -19,10 +19,10 @@ namespace Model_Loader.Infrastructure
         /// <param name="isHaveHeaders"></param>
         /// <param name="isHaveQuotes"></param>
         /// <returns></returns>
-        public static List<string> WriteToFile(string filePath, char delimeter, TypeConverter typeConverter, IEnumerable<dynamic> mods, Type type, Type parentClass, bool isHaveHeaders = true, bool isHaveQuotes = true)
+        public static List<string> WriteToFile<T>(string filePath, char delimeter, TypeConverter typeConverter, IEnumerable<T> mods, Type type, Type parentClass, bool isHaveHeaders = true, bool isHaveQuotes = true)
         {
             List<string> lines = new List<string>();
-            List<Object> models = mods.ToList();
+            List<T> models = mods.ToList();
 
             if (models.Count > 0)
             {

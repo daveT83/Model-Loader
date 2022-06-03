@@ -207,6 +207,11 @@ namespace Model_Loader.Infrastructure
             return list;
         } 
 
+        public DateTime ConvertToDateTime(string value)
+        {
+            return DateTime.Parse(value);
+        }
+        
         public string ConvertFromBool(bool value)
         {
             return Convert.ToString(value);
@@ -280,6 +285,11 @@ namespace Model_Loader.Infrastructure
         public string ConvertFromList(List<dynamic> value)
         {
             return String.Join(",",value);
+        }
+    
+        public string ConvertFromDateTime(DateTime value)
+        {
+            return value.ToString();
         }
     }
 }
