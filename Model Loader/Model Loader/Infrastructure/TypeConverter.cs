@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,7 +28,7 @@ namespace Model_Loader.Infrastructure
                 {
                     foreach (MethodInfo methodInfo in methodInfos)
                     {
-                        if (methodInfo.ReturnType.Equals(type))
+                        if (methodInfo.ReturnType.Name.Equals(type.Name))
                         {
                             return methodInfo.Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
                         }
@@ -59,7 +60,7 @@ namespace Model_Loader.Infrastructure
                 {
                     foreach (MethodInfo methodInfo in methodInfos)
                     {
-                        if (methodInfo.ReturnType.Equals(type))
+                        if (methodInfo.ReturnType.Name.Equals(type.Name))
                         {
                             return methodInfo.Invoke(Activator.CreateInstance(parentClass), new object[] { value });
                         }
@@ -105,9 +106,28 @@ namespace Model_Loader.Infrastructure
         /// </summary>
         /// <param name="methodInfos"></param>
         /// <returns></returns>
+        
+        /// <summary>
+        /// Converts a List of string to a different type.
+        /// </summary>
+        /// <param name="stringList"></param>
+        /// <returns></returns>
+        public List<T> ConvertToTypedListFromStringList<T>(List<string>stringList)
+        {
+            Type type = typeof(T);
+            List<T> list = new List<T>();
+
+            foreach (string str in stringList)
+            {
+                list.Add(ConvertToType(str,type));
+            }
+
+            return list;
+        }
+        
         private MethodInfo[] TrimMethodInfos(MethodInfo[] methodInfos)
         {
-            string[] names = new string[] { "ConvertToType", "Equals", "GetHashCode", "GetType", "ToString" };
+            string[] names = new string[] { "ConvertToType", "ConvertToTypedListFromStringList", "Equals", "GetHashCode", "GetType", "ToString" };
             return methodInfos.Where(x => !names.Contains(x.Name)).ToArray();
         }
 
@@ -174,6 +194,18 @@ namespace Model_Loader.Infrastructure
         {
             return UInt16.Parse(value);
         }
+
+        public List<string> ConvertToList(string value)
+        {
+            List<string> list = new List<string>();
+
+            foreach (string val in value.Split(','))
+            {
+                list.Add(val);
+            }
+
+            return list;
+        } 
 
         public string ConvertFromBool(bool value)
         {
@@ -243,6 +275,11 @@ namespace Model_Loader.Infrastructure
         public string ConvertFromUshort(ushort value)
         {
             return Convert.ToString(value);
+        }
+    
+        public string ConvertFromList(List<dynamic> value)
+        {
+            return String.Join(",",value);
         }
     }
 }

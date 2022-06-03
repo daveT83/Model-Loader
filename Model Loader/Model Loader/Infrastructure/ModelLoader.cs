@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Model_Loader.Infrastructure
@@ -9,12 +10,14 @@ namespace Model_Loader.Infrastructure
         public Type Type { get; private set; }
         public bool IsCaseSensitive { get; set; }
         public TypeConverter TypeConverter { get; private set; }
+        public List<string> AdditionalNameSpacesToReference { get; set; }
 
         public ModelLoader(Type modelType, TypeConverter typeConverter)
         {
             Type = modelType;
             IsCaseSensitive = false;
             TypeConverter = typeConverter;
+            AdditionalNameSpacesToReference = new List<string>();
         }
 
         /// <summary>
@@ -41,18 +44,20 @@ namespace Model_Loader.Infrastructure
         /// <param name="model"></param>
         private void LoadField(KeyValuePair<string, string> element, object model)
         {
-            PropertyInfo[] properties = Type.GetProperties();
+            PropertyInfo[] properties;
 
-            foreach (PropertyInfo propertyInfo in properties)
+            if (IsCaseSensitive)
             {
-                if (IsCaseSensitive && propertyInfo.Name.Equals(element.Key))
-                {
-                    SetValue(propertyInfo, model, propertyInfo.PropertyType, GetValue(element.Value));
-                }
-                else if (!IsCaseSensitive && propertyInfo.Name.ToLower().Equals(element.Key.ToLower()))
-                {
-                    SetValue(propertyInfo, model, propertyInfo.PropertyType, GetValue(element.Value));
-                }
+                properties = Type.GetProperties().Where(x => x.Name.Equals(element.Key)).ToArray();
+            }
+            else
+            {
+                properties = Type.GetProperties().Where(x => x.Name.ToLower().Equals(element.Key.ToLower())).ToArray();
+            }
+
+            if (properties.Length > 0)
+            {
+                SetValue(properties[0], model, properties[0].PropertyType, GetValue(element.Value));
             }
         }
 
@@ -79,7 +84,19 @@ namespace Model_Loader.Infrastructure
         /// <param name="fieldValue"></param>
         private void SetValue(PropertyInfo propertyInfo, object model, Type fieldType, string fieldValue)
         {
-            propertyInfo.SetValue(model, TypeConverter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter)));
+            if (fieldType.GetGenericArguments().Length > 0)
+            {
+
+                MethodInfo method = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList");
+                MethodInfo generic = method.MakeGenericMethod(fieldType.GetGenericArguments().Single());
+
+                Console.WriteLine(fieldType.GetGenericArguments().Single());
+                propertyInfo.SetValue(model, generic.Invoke(TypeConverter, new object[] { TypeConverter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter)) }));
+            }
+            else
+            {
+                propertyInfo.SetValue(model, TypeConverter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter)));
+            }
         }
     }
 }
