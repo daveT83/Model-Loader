@@ -21,5 +21,6 @@ namespace Model_Loader_Examples.Models
         public ulong ULongExample { get; set; }
         public short ShortExample { get; set; }
         public ushort UShortExample { get; set; }
+        public List<int> ListExample { get; set; }
     }
 }

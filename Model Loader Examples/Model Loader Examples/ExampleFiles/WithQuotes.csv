@@ -1,3 +1,3 @@
-﻿IntExample,StringExample,BoolExample,CharArrayExample,CharExample,DecimalExample,DoubleExample,FloatExample,UIntExample,LongExample,ULongExample,ShortExample,UShortExample
-"1","string","false","char array","c","2.0285792485794380","5.01245235424","3.34","34","9324857","324675","123","456"
-"4","string, again,","true","char, array, again,","d","9.4358975987087345","1.34985705434","4.33","43","2234752","98123","789","12"
+﻿IntExample,StringExample,BoolExample,CharArrayExample,CharExample,DecimalExample,DoubleExample,FloatExample,UIntExample,LongExample,ULongExample,ShortExample,UShortExample,ListExample
+"1","string","false","char array","c","2.0285792485794380","5.01245235424","3.34","34","9324857","324675","123","456",""
+"4","string, again,","true","char, array, again,","d","9.4358975987087345","1.34985705434","4.33","43","2234752","98123","789","12","1,2,3,4,5"
