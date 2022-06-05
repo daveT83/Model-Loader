@@ -51,7 +51,47 @@ This has support for all built in type for c#, but if you need to add additional
         //**NOTE** the naming convertion for this method must be ConvertFrom{Type} and must return string and accept one parameter being a {Type} value
         public string ConvertFromMyNewType(MyNewType value)
         {
-            return MyNewType().ToString();
+            return value.ToString();
+        }
+    }
+  
+    public class OtherClass
+    {
+        public void CallConvertToType(string value, Type type)
+        {
+            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+
+            customTypeConverter.ConvertToType(value, type, typeof(CustomTypeConverter));
+        }
+
+        public void CallConvertFromType(string value, Type type)
+        {
+            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+
+            customTypeConverter.ConvertFromType(value, type, typeof(CustomTypeConverter));
+        }
+    }
+  ```
+  
+  
+## What if I don't like how an already supported type is handled?
+  In this case you would just need to override that method and implement that logic you want it to use to either convert to a given type or convert a given type to a string. See below.
+  
+    ```c#
+    public class CustomTypeConverter : TypeConverter
+    {
+        //Convert from a string to your new type
+        //**NOTE** the naming convertion for this method must be ConvertTo{Type} and must return Type and accept one parameter being a string value
+        public int ConvertToInt(string value)
+        {
+            return Int32.Parse(value);
+        }
+        
+        //convert from your new type to a string
+        //**NOTE** the naming convertion for this method must be ConvertFrom{Type} and must return string and accept one parameter being a {Type} value
+        public string ConvertFromInt(Int value)
+        {
+            return value.ToString();
         }
     }
   
