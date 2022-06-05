@@ -39,11 +39,15 @@ This has support for all built in type for c#, but if you need to add additional
   ```c#
     public class CustomTypeConverter : TypeConverter
     {
+        //Convert from a string to your new type
+        //**NOTE** the naming convertion for this method must be ConvertTo{Type} and must return Type and accept one parameter being a string value
         public MyNewType ConvertToMyNewType(string value)
         {
             return Convert.ToMyNewType(value);
         }
-
+        
+        //convert from your new type to a string
+        //**NOTE** the naming convertion for this method must be ConvertFrom{Type} and must return string and accept one parameter being a {Type} value
         public string ConvertFromMyNewType(MyNewType value)
         {
             return MyNewType().ToString();
