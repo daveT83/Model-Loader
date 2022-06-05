@@ -32,3 +32,21 @@ This has support for all built in type for c#, but if you need to add additional
 ## What should I download?
   - If you want to download the source code and/or examples you can download them [here](https://github.com/daveT83/Model-Loader/archive/refs/heads/main.zip).
   - If you only want the dll you can get that [here](https://github.com/daveT83/Model-Loader/raw/main/Model%20Loader/Model%20Loader/bin/Debug/Model%20Loader.dll).
+
+## What do I do if I need to dynamically load an unsupported type?
+  There is a simple solution to this that is built into the basic functionality of the dll. If you need to add a new Type all you need to do is extend the TypeConverter class. Please see the code below.
+  
+  ```c#
+    public class CustomTypeConverter : TypeConverter
+    {
+        public MyNewType ConvertToMyNewType(string value)
+        {
+            return Convert.ToMyNewType(value);
+        }
+
+        public string ConvertFromMyNewType(MyNewType value)
+        {
+            return MyNewType().ToString();
+        }
+    }
+  ```
