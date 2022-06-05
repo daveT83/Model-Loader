@@ -3,7 +3,7 @@
 ## Summary:
 Dynamically loads values into a model, pulls values out of a model, loads a flat file file into a ``` c# List<T>``` and writes a flat file based on a ```c# List<T>```
 
-This accepts a ```c# Dictionary<string,string>``` with the Keys being the field names and the values being the values to load.
+This accepts a ``` Dictionary<string,string>``` with the Keys being the field names and the values being the values to load.
 Support for auto loading from a flat file and from the arguments is built in.
 For an example please see the included example project. [Examples](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/Example.cs)
 
