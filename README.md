@@ -20,7 +20,9 @@ This has support for all built in type for c#, but if you need to add additional
   - double
   - float
   - int
+  - ~~nint~~
   - uint
+  - ~~nuint~~
   - long
   - short
   - ushort
