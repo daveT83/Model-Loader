@@ -106,25 +106,25 @@ namespace Model_Loader.Infrastructure
         /// </summary>
         /// <param name="methodInfos"></param>
         /// <returns></returns>
-        
+
         /// <summary>
         /// Converts a List of string to a different type.
         /// </summary>
         /// <param name="stringList"></param>
         /// <returns></returns>
-        public List<T> ConvertToTypedListFromStringList<T>(List<string>stringList)
+        public List<T> ConvertToTypedListFromStringList<T>(List<string> stringList)
         {
             Type type = typeof(T);
             List<T> list = new List<T>();
 
             foreach (string str in stringList)
             {
-                list.Add(ConvertToType(str,type));
+                list.Add(ConvertToType(str, type));
             }
 
             return list;
         }
-        
+
         private MethodInfo[] TrimMethodInfos(MethodInfo[] methodInfos)
         {
             string[] names = new string[] { "ConvertToType", "ConvertToTypedListFromStringList", "Equals", "GetHashCode", "GetType", "ToString" };
@@ -139,6 +139,16 @@ namespace Model_Loader.Infrastructure
         public byte[] ConvertToByteArray(string value)
         {
             return Encoding.UTF8.GetBytes(value);
+        }
+
+        public byte ConvertToByte(string value)
+        {
+            return Convert.ToByte(value);
+        }
+
+        public sbyte ConvertToSbyte(string value)
+        {
+            return Convert.ToSByte(value);
         }
 
         public char[] ConvertToCharArray(string value)
@@ -195,6 +205,11 @@ namespace Model_Loader.Infrastructure
             return UInt16.Parse(value);
         }
 
+        public string ConvertToString(string value)
+        {
+            return value;
+        }
+
         public List<string> ConvertToList(string value)
         {
             List<string> list = new List<string>();
@@ -205,13 +220,13 @@ namespace Model_Loader.Infrastructure
             }
 
             return list;
-        } 
+        }
 
         public DateTime ConvertToDateTime(string value)
         {
             return DateTime.Parse(value);
         }
-        
+
         public string ConvertFromBool(bool value)
         {
             return Convert.ToString(value);
@@ -220,6 +235,16 @@ namespace Model_Loader.Infrastructure
         public string ConvertFromByteArray(byte[] value)
         {
             return String.Join("", value);
+        }
+
+        public string ConvertFromByte(byte value)
+        {
+            return value.ToString();
+        }
+
+        public string ConvertFromSbyte(sbyte value)
+        {
+            return value.ToString();
         }
 
         public string ConvertFromCharArray(char[] value)
@@ -281,12 +306,17 @@ namespace Model_Loader.Infrastructure
         {
             return Convert.ToString(value);
         }
-    
+
+        public string ConvertFromString(string value)
+        {
+            return value;
+        }
+
         public string ConvertFromList(List<dynamic> value)
         {
-            return String.Join(",",value);
+            return String.Join(",", value);
         }
-    
+
         public string ConvertFromDateTime(DateTime value)
         {
             return value.ToString();
