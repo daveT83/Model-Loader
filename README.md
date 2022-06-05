@@ -80,13 +80,13 @@ This has support for all built in types for c#, but if you need to add additiona
   ```c#
     public class CustomTypeConverter : TypeConverter
     {
-        //Convert from a string to your new type
+        //Overrides the ConvertToInt method
         public override int ConvertToInt(string value)
         {
             return Int32.Parse(value);
         }
         
-        //convert from your new type to a string
+        //Overrides the ConverFromInt method
         public override string ConvertFromInt(Int value)
         {
             return value.ToString();
