@@ -59,14 +59,14 @@ This has support for all built in type for c#, but if you need to add additional
     {
         public void CallConvertToType(string value, Type type)
         {
-            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
 
             customTypeConverter.ConvertToType(value, type, typeof(CustomTypeConverter));
         }
 
         public void CallConvertFromType(string value, Type type)
         {
-            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
 
             customTypeConverter.ConvertFromType(value, type, typeof(CustomTypeConverter));
         }
@@ -97,14 +97,14 @@ This has support for all built in type for c#, but if you need to add additional
     {
         public void CallConvertToType(string value, Type type)
         {
-            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
 
             customTypeConverter.ConvertToType(value, type, typeof(CustomTypeConverter));
         }
 
         public void CallConvertFromType(string value, Type type)
         {
-            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
 
             customTypeConverter.ConvertFromType(value, type, typeof(CustomTypeConverter));
         }
