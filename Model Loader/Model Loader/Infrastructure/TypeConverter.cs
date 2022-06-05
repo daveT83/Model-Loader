@@ -131,86 +131,86 @@ namespace Model_Loader.Infrastructure
             return methodInfos.Where(x => !names.Contains(x.Name)).ToArray();
         }
 
-        public bool ConvertToBool(string value)
+        public virtual bool ConvertToBool(string value)
         {
             return Convert.ToBoolean(value);
         }
 
-        public byte[] ConvertToByteArray(string value)
+        public virtual byte[] ConvertToByteArray(string value)
         {
             return Encoding.UTF8.GetBytes(value);
         }
 
-        public byte ConvertToByte(string value)
+        public virtual byte ConvertToByte(string value)
         {
             return Convert.ToByte(value);
         }
 
-        public sbyte ConvertToSbyte(string value)
+        public virtual sbyte ConvertToSbyte(string value)
         {
             return Convert.ToSByte(value);
         }
 
-        public char[] ConvertToCharArray(string value)
+        public virtual char[] ConvertToCharArray(string value)
         {
             return value.ToCharArray();
         }
 
-        public char ConvertToChar(string value)
+        public virtual char ConvertToChar(string value)
         {
             return value.ToCharArray()[0];
         }
 
-        public decimal ConvertToDecimal(string value)
+        public virtual decimal ConvertToDecimal(string value)
         {
             return Decimal.Parse(value);
         }
 
-        public double ConvertToDouble(string value)
+        public virtual double ConvertToDouble(string value)
         {
             return Double.Parse(value);
         }
 
-        public float ConvertToFloat(string value)
+        public virtual float ConvertToFloat(string value)
         {
             return Single.Parse(value);
         }
 
-        public int ConvertToInt(string value)
+        public virtual int ConvertToInt(string value)
         {
             return Int32.Parse(value);
         }
 
-        public uint ConvertToUint(string value)
+        public virtual uint ConvertToUint(string value)
         {
             return UInt32.Parse(value);
         }
 
-        public long ConvertToLong(string value)
+        public virtual long ConvertToLong(string value)
         {
             return Int64.Parse(value);
         }
 
-        public ulong ConvertToUlong(string value)
+        public virtual ulong ConvertToUlong(string value)
         {
             return UInt64.Parse(value);
         }
-        public short ConvertToShort(string value)
+        public virtual short ConvertToShort(string value)
         {
             return Int16.Parse(value);
         }
 
-        public ushort ConvertToUshort(string value)
+        public virtual ushort ConvertToUshort(string value)
         {
             return UInt16.Parse(value);
         }
 
-        public string ConvertToString(string value)
+        public virtual string ConvertToString(string value)
         {
             return value;
         }
 
-        public List<string> ConvertToList(string value)
+        public virtual List<string> ConvertToList(string value)
         {
             List<string> list = new List<string>();
 
@@ -222,32 +222,32 @@ namespace Model_Loader.Infrastructure
             return list;
         }
 
-        public DateTime ConvertToDateTime(string value)
+        public virtual DateTime ConvertToDateTime(string value)
         {
             return DateTime.Parse(value);
         }
 
-        public string ConvertFromBool(bool value)
+        public virtual string ConvertFromBool(bool value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromByteArray(byte[] value)
+        public virtual string ConvertFromByteArray(byte[] value)
         {
             return String.Join("", value);
         }
 
-        public string ConvertFromByte(byte value)
+        public virtual string ConvertFromByte(byte value)
         {
             return value.ToString();
         }
 
-        public string ConvertFromSbyte(sbyte value)
+        public virtual string ConvertFromSbyte(sbyte value)
         {
             return value.ToString();
         }
 
-        public string ConvertFromCharArray(char[] value)
+        public virtual string ConvertFromCharArray(char[] value)
         {
             string chars = "";
 
@@ -258,66 +258,66 @@ namespace Model_Loader.Infrastructure
             return chars;
         }
 
-        public string ConvertFromChar(char value)
+        public virtual string ConvertFromChar(char value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromDecimal(decimal value)
+        public virtual string ConvertFromDecimal(decimal value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromDouble(double value)
+        public virtual string ConvertFromDouble(double value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromFloat(float value)
+        public virtual string ConvertFromFloat(float value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromInt(int value)
+        public virtual string ConvertFromInt(int value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromUint(uint value)
+        public virtual string ConvertFromUint(uint value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromLong(long value)
+        public virtual string ConvertFromLong(long value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromUlong(ulong value)
+        public virtual string ConvertFromUlong(ulong value)
         {
             return Convert.ToString(value);
         }
-        public string ConvertFromShort(short value)
-        {
-            return Convert.ToString(value);
-        }
-
-        public string ConvertFromUshort(ushort value)
+        public virtual string ConvertFromShort(short value)
         {
             return Convert.ToString(value);
         }
 
-        public string ConvertFromString(string value)
+        public virtual string ConvertFromUshort(ushort value)
+        {
+            return Convert.ToString(value);
+        }
+
+        public virtual string ConvertFromString(string value)
         {
             return value;
         }
 
-        public string ConvertFromList(List<dynamic> value)
+        public virtual string ConvertFromList(List<dynamic> value)
         {
             return String.Join(",", value);
         }
 
-        public string ConvertFromDateTime(DateTime value)
+        public virtual string ConvertFromDateTime(DateTime value)
         {
             return value.ToString();
         }
