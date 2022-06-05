@@ -14,3 +14,7 @@ This has support for all built in type for c#, but if you need to add additional
   - [Microsoft's Official Built in Types](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types)
   - Lists
   - DateTime
+  
+## What should I download?
+  If you want to download the source code and/or examples you can download them [here](https://github.com/daveT83/Model-Loader/archive/refs/heads/main.zip).
+  If you only want the dll you can get that [here](https://github.com/daveT83/Model-Loader/raw/main/Model%20Loader/Model%20Loader/bin/Debug/Model%20Loader.dll).
