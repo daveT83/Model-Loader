@@ -10,6 +10,7 @@ For an example please see the included example project. [Examples](https://githu
 This has support for all built in type for c#, but if you need to add additional Types you can extend the TypeConverter class to add your own conversions from a string value to another ```c# Type```. Best practice would be to follow the existing naming convention of ```c# public Type ConvertToType(string value)``` and ```c# public string ConvertFromType(Type value)```. Please see a list below for a list of all supported types.
   
 ## Supported Types:
+```c#
   - bool
   - byte[]
   - byte
@@ -29,6 +30,7 @@ This has support for all built in type for c#, but if you need to add additional
   - string
   - Lists
   - DateTime
+  ```
   
 ## What should I download?
   - If you want to download the source code and/or examples you can download them [here](https://github.com/daveT83/Model-Loader/archive/refs/heads/main.zip).
