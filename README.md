@@ -1,7 +1,7 @@
 # Model-Loader
 
 ## Summary:
-Dynamically loads values into a model, pulls values out of a model, loads a flat file file into a ```c# List<T>``` and writes a flat file based on a ```c# List<T>```
+Dynamically loads values into a model, pulls values out of a model, loads a flat file file into a ``` c# List<T>``` and writes a flat file based on a ```c# List<T>```
 
 This accepts a ```c# Dictionary<string,string>``` with the Keys being the field names and the values being the values to load.
 Support for auto loading from a flat file and from the arguments is built in.
