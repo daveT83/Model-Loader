@@ -7,7 +7,7 @@ This accepts a ```Dictionary<string,string> ``` with the Keys being the field na
 Support for auto loading from a flat file and from the arguments is built in.
 For an example please see the included example project. [Examples](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/Example.cs)
 
-This has support for all built in type for c#, but if you need to add additional Types you can extend the TypeConverter class to add your own conversions from a string value to another ```Type```. Best practice would be to follow the existing naming convention of ```public Type ConvertToType(string value)``` and ```public string ConvertFromType(Type value)```. Please see a list below for a list of all supported types.
+This has support for all built in types for c#, but if you need to add additional types you can extend the TypeConverter class to add your own conversions from a string value to another ```Type```. Best practice would be to follow the existing naming convention of ```public Type ConvertToType(string value)``` and ```public string ConvertFromType(Type value)```. Please see a list below for a list of all supported types.
   
 ## Supported Types:
   - bool
