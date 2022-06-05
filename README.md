@@ -77,7 +77,7 @@ This has support for all built in type for c#, but if you need to add additional
 ## What if I don't like how an already supported type is handled?
   In this case you would just need to override that method and implement that logic you want it to use to either convert to a given type or convert a given type to a string. See below.
   
-    ```c#
+    ```
     public class CustomTypeConverter : TypeConverter
     {
         //Convert from a string to your new type
