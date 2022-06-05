@@ -11,8 +11,6 @@ This has support for all built in type for c#, but if you need to add additional
   
   
 ## Supported Types:
-  ```
-  [Microsoft's Official Built in Types](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types)
-  List<T>
-  DateTime
-  ```
+  - [Microsoft's Official Built in Types](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types)
+  - List<T>
+  - DateTime
