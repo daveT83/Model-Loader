@@ -27,7 +27,7 @@ This has support for all built in types for c#, but if you need to add additiona
   - short
   - ushort
   - string
-  - Lists
+  - ```List<T>```
   - DateTime
   
 ## What should I download?
