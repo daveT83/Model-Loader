@@ -1,10 +1,6 @@
 ﻿using Model_Loader.Infrastructure;
 using Model_Loader_Examples.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model_Loader_Examples.Examples
 {
