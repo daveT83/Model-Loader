@@ -73,7 +73,7 @@ namespace Model_Loader_Examples.Examples
   
   
 ## What if I don't like how an already supported type is handled?
-  In this case you would just need to override that method and implement that logic you want it to use to either convert to a given ```Type``` or convert a given ```Type``` to a string. See below.
+  In this case you would just need to override that method and implement that logic you want it to use to either convert to a given ```Type``` or convert a given ```Type``` to a ```string```. See below.
   
   ```c#
 using Model_Loader.Infrastructure;
