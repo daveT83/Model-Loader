@@ -5,7 +5,9 @@ Dynamically loads values into a model, pulls values out of a model, loads a flat
 
 This accepts a ```Dictionary<string,string> ``` with the Keys being the field names and the values being the values to load.
 Support for auto loading from a flat file and from the arguments is built in.
-For an example please see the included example project. [Example Logic](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/Example.cs) [Custom TypeConverter Example](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/CustomTypeConverter.cs)
+For an example please see the included example project. For a quick overview, please see below.
+- [Example Logic](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/Example.cs) 
+- [Custom TypeConverter Example](https://github.com/daveT83/Model-Loader/blob/main/Model%20Loader%20Examples/Model%20Loader%20Examples/Examples/CustomTypeConverter.cs)
 
 This has support for all built in types for c#, but if you need to add additional types you can extend the TypeConverter class to add your own conversions from a string value to another ```Type```. Best practice would be to follow the existing naming convention of ```public Type ConvertToType(string value)``` and ```public string ConvertFromType(Type value)```. Please see a list below for a list of all supported types.
   
