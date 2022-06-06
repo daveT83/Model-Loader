@@ -47,8 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Examples\CustomTypeConverter.cs" />
     <Compile Include="Examples\Example.cs" />
+    <Compile Include="Models\CustomType.cs" />
     <Compile Include="Models\ExampleModel.cs" />
+    <Compile Include="Models\ExampleModelWithCustomType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

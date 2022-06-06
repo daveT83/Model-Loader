@@ -1,6 +1,8 @@
 ﻿using Model_Loader_Examples.Models;
 using Model_Loader.Infrastructure;
 using System.Collections.Generic;
+using System.Reflection;
+using System;
 
 namespace Model_Loader_Examples.Examples
 {
@@ -52,7 +54,7 @@ namespace Model_Loader_Examples.Examples
             TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
                                                                 //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
 
-            return DictionaryCreator.CreateFromModel(model, model.GetType(), typeConverter.GetType(), typeConverter);
+            return DictionaryCreator.CreateFromModel(model, model.GetType(), typeConverter);
         }
 
         public static void WriteToFile(string filePath, char delimeter, List<ExampleModel> models)
@@ -60,7 +62,26 @@ namespace Model_Loader_Examples.Examples
             TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
                                                                 //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
 
-            GenerateFlatFile.WriteToFile(filePath, delimeter, typeConverter, models, models[0].GetType(), typeConverter.GetType(), isHaveHeaders:true, isHaveQuotes:true);
+            GenerateFlatFile.WriteToFile(filePath, delimeter, typeConverter, models, models[0].GetType(), isHaveHeaders:true, isHaveQuotes:true);
         }
+
+        public static void OverridingTypeConverter()
+        {
+            CustomTypeConverter customTypeConvert = new CustomTypeConverter();
+            ModelLoader modelLoader = new ModelLoader(typeof(ExampleModelWithCustomType), customTypeConvert);
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            ExampleModelWithCustomType exampleModelWithCustomType;
+            Dictionary<string, string> returnDictionary;
+
+            //Adding elements to the dictionary to build the model.
+            dictionary.Add("MyCustomType", "Sierra 117");
+            dictionary.Add("Label","Chief");
+            dictionary.Add("Date","11/15/2001");
+
+            exampleModelWithCustomType = modelLoader.LoadModel(dictionary);
+
+            returnDictionary = DictionaryCreator.CreateFromModel(exampleModelWithCustomType, typeof(ExampleModelWithCustomType), customTypeConvert);
+        }
+
     }
 }
