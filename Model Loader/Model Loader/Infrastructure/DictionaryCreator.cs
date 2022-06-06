@@ -121,7 +121,7 @@ namespace Model_Loader.Infrastructure
         /// <param name="parentclass"></param>
         /// <param name="typeConverter"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> CreateFromModel(Object model, Type type, Type parentclass, TypeConverter typeConverter)
+        public static Dictionary<string, string> CreateFromModel(Object model, Type type, dynamic typeConverter)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
@@ -135,7 +135,7 @@ namespace Model_Loader.Infrastructure
                 }
                 else
                 {
-                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, parentclass));
+                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, typeConverter.GetType()));
                 }
             }
 

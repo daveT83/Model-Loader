@@ -9,14 +9,14 @@ namespace Model_Loader.Infrastructure
     {
         public Type Type { get; private set; }
         public bool IsCaseSensitive { get; set; }
-        public TypeConverter TypeConverter { get; private set; }
+        public dynamic Type_Converter { get; private set; }
         public List<string> AdditionalNameSpacesToReference { get; set; }
 
-        public ModelLoader(Type modelType, TypeConverter typeConverter)
+        public ModelLoader(Type modelType, dynamic typeConverter)
         {
             Type = modelType;
             IsCaseSensitive = false;
-            TypeConverter = typeConverter;
+            Type_Converter = typeConverter;
             AdditionalNameSpacesToReference = new List<string>();
         }
 
@@ -70,7 +70,7 @@ namespace Model_Loader.Infrastructure
         {
             if (value.ToLower().Equals("null") || String.IsNullOrWhiteSpace(value) || String.IsNullOrEmpty(value))
             {
-                return null;
+                return "";
             }
             return value;
         }
@@ -89,13 +89,13 @@ namespace Model_Loader.Infrastructure
 
                 MethodInfo method = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList");
                 MethodInfo generic = method.MakeGenericMethod(fieldType.GetGenericArguments().Single());
+                List<string> value = Type_Converter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter));
 
-                Console.WriteLine(fieldType.GetGenericArguments().Single());
-                propertyInfo.SetValue(model, generic.Invoke(TypeConverter, new object[] { TypeConverter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter)) }));
+                propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { value }));
             }
             else
             {
-                propertyInfo.SetValue(model, TypeConverter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter)));
+                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, fieldType,Type_Converter.GetType()));
             }
         }
     }

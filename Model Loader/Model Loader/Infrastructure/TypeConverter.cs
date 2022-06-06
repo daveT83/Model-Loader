@@ -8,6 +8,7 @@ namespace Model_Loader.Infrastructure
 {
     public class TypeConverter
     {
+
         /// <summary>
         /// Converts a string to the appropriate type.
         /// </summary>
@@ -117,9 +118,11 @@ namespace Model_Loader.Infrastructure
             Type type = typeof(T);
             List<T> list = new List<T>();
 
-            foreach (string str in stringList)
-            {
-                list.Add(ConvertToType(str, type));
+            if (stringList != null) {
+                foreach (string str in stringList)
+                {
+                    list.Add(ConvertToType(str, type));
+                }
             }
 
             return list;
