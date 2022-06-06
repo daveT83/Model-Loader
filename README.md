@@ -40,39 +40,35 @@ This has support for all built in types for c#, but if you need to add additiona
   There is a simple solution to this that is built into the basic functionality of the dll. If you need to add a new ```Type``` all you need to do is extend the ```TypeConverter``` class. Please see the code below.
   
   ```c#
-    public class CustomTypeConverter : TypeConverter
+using Model_Loader.Infrastructure;
+using Model_Loader_Examples.Models;
+using System;
+
+namespace Model_Loader_Examples.Examples
+{
+    public class CustomTypeConverter:TypeConverter
     {
-        //Convert from a string to your new type
-        //**NOTE** the naming convertion for this method must be ConvertTo{Type} and must return Type and accept one parameter being a string value
-        public MyNewType ConvertToMyNewType(string value)
+        //Adding support for my CustomType
+        public CustomType ConvertToCustomType(string value)
         {
-            return Convert.ToMyNewType(value);
+            CustomType type = new CustomType();
+            string[] split = value.Split(' ');
+             type.ID = ConvertToInt(split[1]);
+            type.ID_Prefix = split[0];
+
+            return type;
         }
-        
-        //convert from your new type to a string
-        //**NOTE** the naming convertion for this method must be ConvertFrom{Type} and must return string and accept one parameter being a {Type} value
-        public string ConvertFromMyNewType(MyNewType value)
+
+        //adding support for my CustomType
+        public string ConvertFromCustomType(CustomType value)
         {
-            return value.ToString();
+            string id = ConvertFromInt(value.ID);
+            string idPrefix = value.ID_Prefix;
+            return idPrefix + " " + id;
         }
     }
-  
-    public class OtherClass
-    {
-        public void CallConvertToType(string value, Type type)
-        {
-            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
+}
 
-            customTypeConverter.ConvertToType(value, type, typeof(CustomTypeConverter));
-        }
-
-        public void CallConvertFromType(string value, Type type)
-        {
-            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
-
-            customTypeConverter.ConvertFromType(value, type, typeof(CustomTypeConverter));
-        }
-    }
   ```
   
   
@@ -80,35 +76,20 @@ This has support for all built in types for c#, but if you need to add additiona
   In this case you would just need to override that method and implement that logic you want it to use to either convert to a given type or convert a given type to a string. See below.
   
   ```c#
-    public class CustomTypeConverter : TypeConverter
+using Model_Loader.Infrastructure;
+using Model_Loader_Examples.Models;
+using System;
+
+namespace Model_Loader_Examples.Examples
+{
+    public class CustomTypeConverter:TypeConverter
     {
-        //Overrides the ConvertToInt method
-        public override int ConvertToInt(string value)
+        //Overriding how the date is output
+        public override string ConvertFromDateTime(DateTime value)
         {
-            return Int32.Parse(value);
-        }
-        
-        //Overrides the ConverFromInt method
-        public override string ConvertFromInt(Int value)
-        {
-            return value.ToString();
+            return value.ToString("MM-dd-yyyy");
         }
     }
-  
-    public class OtherClass
-    {
-        public void CallConvertToType(string value, Type type)
-        {
-            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
+}
 
-            customTypeConverter.ConvertToType(value, type, typeof(CustomTypeConverter));
-        }
-
-        public void CallConvertFromType(string value, Type type)
-        {
-            CustomTypeConverter customTypeConverter = new CustomTypeConverter();
-
-            customTypeConverter.ConvertFromType(value, type, typeof(CustomTypeConverter));
-        }
-    }
 ```
