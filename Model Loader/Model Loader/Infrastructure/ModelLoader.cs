@@ -10,14 +10,12 @@ namespace Model_Loader.Infrastructure
         public Type Type { get; private set; }
         public bool IsCaseSensitive { get; set; }
         public dynamic Type_Converter { get; private set; }
-        public List<string> AdditionalNameSpacesToReference { get; set; }
 
         public ModelLoader(Type modelType, dynamic typeConverter)
         {
             Type = modelType;
             IsCaseSensitive = false;
             Type_Converter = typeConverter;
-            AdditionalNameSpacesToReference = new List<string>();
         }
 
         /// <summary>
