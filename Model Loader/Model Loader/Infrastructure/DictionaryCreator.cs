@@ -97,13 +97,27 @@ namespace Model_Loader.Infrastructure
 
                     for (int i = 0; i < headers.Count; i++)
                     {
-                        if (isTrim)
+                        if (i >= lineSplit.Count)
                         {
-                            dict.Add(headers[i].Trim(), lineSplit[i].Trim());
+                            if (isTrim)
+                            {
+                                dict.Add(headers[i].Trim(), "");
+                            }
+                            else
+                            {
+                                dict.Add(headers[i], "");
+                            }
                         }
                         else
                         {
-                            dict.Add(headers[i], lineSplit[i]);
+                            if (isTrim)
+                            {
+                                dict.Add(headers[i].Trim(), lineSplit[i].Trim());
+                            }
+                            else
+                            {
+                                dict.Add(headers[i], lineSplit[i]);
+                            }
                         }
                     }
                     dictionaries.Add(dict);
