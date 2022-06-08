@@ -27,7 +27,9 @@ namespace Model_Loader_Examples.Examples
             //Loads the arguements with the associated variable name into a List<Dictionary<string,string>>
             //Each dictionary in this list represents a single line of the file.
             bool isTrim = true; //use this if you do not want to trim the values(false) read in from the arguements. By defualt this will trim the values(true).
+            List<string> headers = new List<string>() {"IntExample","StringExample","BoolExample","CharArrayExample","CharExample","DecimalExample","DoubleExample","FloatExample","UIntExample","LongExample","ULongExample","ShortExample","UShortExample","ListExample","NEVER_USED"};
             List<Dictionary<string, string>> arguementDictionaries = DictionaryCreator.CreateFromFlatFile(filePath, delimeter, isTrim);
+            List<Dictionary<string, string>> arguementDictionariesWitHeaders = DictionaryCreator.CreateFromFlatFile(filePath, delimeter, headers, isTrim);
 
             //Load the values into the model
             TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
