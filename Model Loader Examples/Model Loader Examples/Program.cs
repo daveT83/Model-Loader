@@ -51,8 +51,7 @@ namespace Model_Loader_Examples
 
                 //--------------------------------------------------------------------------------------------------------------------
                 //Write to CSV file
-                string file = @"C:\Users\davet\Desktop\Test.csv";
-                //string file = @"C:\Users\(yourUser)\Desktop\Test.csv";
+                string file = @"C:\Users\(yourUser)\Desktop\Test.csv";
                 List<ExampleModel> models = new List<ExampleModel>();
                 for (int i = 0; i < 5; i++)
                 {
