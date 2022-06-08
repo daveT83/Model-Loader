@@ -135,7 +135,7 @@ namespace Model_Loader.Infrastructure
                 }
                 else
                 {
-                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType, typeConverter.GetType()));
+                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType));
                 }
             }
 

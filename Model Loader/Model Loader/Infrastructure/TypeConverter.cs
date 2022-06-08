@@ -8,6 +8,12 @@ namespace Model_Loader.Infrastructure
 {
     public class TypeConverter
     {
+        private MethodInfo[] methodInfos;
+
+        public TypeConverter()
+        {
+            methodInfos = TrimMethodInfos(this.GetType().GetMethods());
+        }
 
         /// <summary>
         /// Converts a string to the appropriate type.
@@ -21,54 +27,15 @@ namespace Model_Loader.Infrastructure
             {
                 return null;
             }
-            else
+            else if (!type.Equals(value.GetType()))
             {
-                MethodInfo[] methodInfos = TrimMethodInfos(this.GetType().GetMethods());
-
-                if (!type.Equals(value.GetType()))
+                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.ReturnType.Name.Equals(type.Name)).ToList();
+                if (filteredMethodInfos.Count > 0)
                 {
-                    foreach (MethodInfo methodInfo in methodInfos)
-                    {
-                        if (methodInfo.ReturnType.Name.Equals(type.Name))
-                        {
-                            return methodInfo.Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
-                        }
-                    }
+                    return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
                 }
-                return value;
             }
-        }
-
-        /// <summary>
-        /// Converts a string to the appropriate type.
-        /// Use this if you need to inherit this class.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="parentClass"></param>
-        /// <returns></returns>
-        public dynamic ConvertToType(string value, Type type, Type parentClass)
-        {
-            if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-            else
-            {
-                MethodInfo[] methodInfos = TrimMethodInfos(parentClass.GetMethods());
-
-                if (!type.Equals(value.GetType()))
-                {
-                    foreach (MethodInfo methodInfo in methodInfos)
-                    {
-                        if (methodInfo.ReturnType.Name.Equals(type.Name))
-                        {
-                            return methodInfo.Invoke(Activator.CreateInstance(parentClass), new object[] { value });
-                        }
-                    }
-                }
-                return value;
-            }
+            return value;
         }
 
         /// <summary>
@@ -78,28 +45,21 @@ namespace Model_Loader.Infrastructure
         /// <param name="type"></param>
         /// <param name="parentClass"></param>
         /// <returns></returns>
-        public string ConvertFromType(dynamic value, Type type, Type parentClass)
+        public string ConvertFromType(dynamic value, Type type)
         {
             if (value == null)
             {
                 return "";
             }
-            else
+            else if (!typeof(String).Equals(value.GetType()))
             {
-                MethodInfo[] methodInfos = TrimMethodInfos(parentClass.GetMethods());
-
-                if (!typeof(String).Equals(value.GetType()))
+                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.GetParameters()[0].ParameterType.Equals(value.GetType())).ToList();
+                if (filteredMethodInfos.Count > 0)
                 {
-                    foreach (MethodInfo methodInfo in methodInfos)
-                    {
-                        if (methodInfo.GetParameters()[0].ParameterType.Equals(value.GetType()))
-                        {
-                            return methodInfo.Invoke(Activator.CreateInstance(parentClass), new object[] { value }).ToString();
-                        }
-                    }
+                    return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value }).ToString();
                 }
-                return value;
             }
+            return value;
         }
 
         /// <summary>
@@ -118,7 +78,8 @@ namespace Model_Loader.Infrastructure
             Type type = typeof(T);
             List<T> list = new List<T>();
 
-            if (stringList != null) {
+            if (stringList != null)
+            {
                 foreach (string str in stringList)
                 {
                     list.Add(ConvertToType(str, type));

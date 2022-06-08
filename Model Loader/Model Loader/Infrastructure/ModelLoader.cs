@@ -86,16 +86,14 @@ namespace Model_Loader.Infrastructure
         {
             if (fieldType.GetGenericArguments().Length > 0)
             {
-
-                MethodInfo method = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList");
-                MethodInfo generic = method.MakeGenericMethod(fieldType.GetGenericArguments().Single());
-                List<string> value = Type_Converter.ConvertToType(fieldValue, fieldType, typeof(TypeConverter));
+                MethodInfo generic = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList").MakeGenericMethod(fieldType.GetGenericArguments().Single());
+                List<string> value = Type_Converter.ConvertToType(fieldValue, fieldType);
 
                 propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { value }));
             }
             else
             {
-                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, fieldType,Type_Converter.GetType()));
+                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, fieldType));
             }
         }
     }
