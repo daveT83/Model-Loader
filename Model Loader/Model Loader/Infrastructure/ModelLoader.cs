@@ -5,17 +5,60 @@ using System.Reflection;
 
 namespace Model_Loader.Infrastructure
 {
-    public class ModelLoader
+    public class ModelLoader<T>
     {
-        public Type Type { get; private set; }
         public bool IsCaseSensitive { get; set; }
-        public dynamic Type_Converter { get; private set; }
+        public TypeConverter Type_Converter { get; private set; }
 
-        public ModelLoader(Type modelType, dynamic typeConverter)
+        public ModelLoader(TypeConverter typeConverter)
         {
-            Type = modelType;
             IsCaseSensitive = false;
             Type_Converter = typeConverter;
+        }
+
+        /// <summary>
+        /// Converts the model to a human readable string
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public string UnloadModel(T model, bool isIncludePropertyNames = true)
+        {
+            string modelString = "";
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+            {
+                Type type = property.PropertyType;
+
+                if (type.GetGenericArguments().Length > 0 && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                {
+                    MethodInfo genericMethod = Type_Converter.GetType().GetMethod("ConvertFromIEnumerableType").MakeGenericMethod(property.PropertyType.GetGenericArguments()[0]);
+
+                    if (isIncludePropertyNames)
+                    {
+                        modelString += property.Name + ": " + (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                    }
+                    else
+                    {
+                        modelString += (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                    }
+                    modelString += Environment.NewLine;
+                }
+                else
+                {
+                    MethodInfo genericMethod = Type_Converter.GetType().GetMethod("ConvertFromType").MakeGenericMethod(property.PropertyType);
+
+                    if (isIncludePropertyNames)
+                    {
+                        modelString += property.Name + ": " + (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                    }
+                    else
+                    {
+                        modelString += (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                    }
+                    modelString += Environment.NewLine;
+                }
+            }
+
+            return modelString.TrimEnd(Environment.NewLine.ToCharArray());
         }
 
         /// <summary>
@@ -23,9 +66,9 @@ namespace Model_Loader.Infrastructure
         /// </summary>
         /// <param name="elements"></param>
         /// <returns></returns>
-        public dynamic LoadModel(Dictionary<string, string> elements)
+        public T LoadModel(Dictionary<string, string> elements)
         {
-            object model = Activator.CreateInstance(Type);
+            T model = (T)Activator.CreateInstance(typeof(T));
 
             foreach (KeyValuePair<string, string> element in elements)
             {
@@ -46,11 +89,11 @@ namespace Model_Loader.Infrastructure
 
             if (IsCaseSensitive)
             {
-                properties = Type.GetProperties().Where(x => x.Name.Equals(element.Key)).ToArray();
+                properties = typeof(T).GetProperties().Where(x => x.Name.Equals(element.Key)).ToArray();
             }
             else
             {
-                properties = Type.GetProperties().Where(x => x.Name.ToLower().Equals(element.Key.ToLower())).ToArray();
+                properties = typeof(T).GetProperties().Where(x => x.Name.ToLower().Equals(element.Key.ToLower())).ToArray();
             }
 
             if (properties.Length > 0)
@@ -80,18 +123,19 @@ namespace Model_Loader.Infrastructure
         /// <param name="model"></param>
         /// <param name="fieldType"></param>
         /// <param name="fieldValue"></param>
-        private void SetValue(PropertyInfo propertyInfo, object model, Type fieldType, string fieldValue)
+        private void SetValue(PropertyInfo propertyInfo, object model, Type type, string fieldValue)
         {
-            if (fieldType.GetGenericArguments().Length > 0)
-            {
-                MethodInfo generic = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList").MakeGenericMethod(fieldType.GetGenericArguments().Single());
-                List<string> value = Type_Converter.ConvertToType(fieldValue, fieldType);
 
-                propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { value }));
+            if (type.GetGenericArguments().Length > 0 && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+            {
+                MethodInfo generic = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList").MakeGenericMethod(type.GetGenericArguments().Single());
+
+
+                propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { Type_Converter.ConvertToType(fieldValue, type) }));
             }
             else
             {
-                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, fieldType));
+                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, type));
             }
         }
     }

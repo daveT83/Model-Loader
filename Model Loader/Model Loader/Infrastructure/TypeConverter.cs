@@ -21,6 +21,29 @@ namespace Model_Loader.Infrastructure
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <returns></returns>
+        public T ConvertToType<T>(string value)
+        {
+            if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
+            {
+                return default(T);
+            }
+            else if (!typeof(T).Equals(value.GetType()))
+            {
+                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.ReturnType.Name.Equals(typeof(T).Name)).ToList();
+                if (filteredMethodInfos.Count > 0)
+                {
+                    return (T)filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
+                }
+            }
+            return default(T);
+        }
+
+        /// <summary>
+        /// Converts a string to the appropriate type.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public dynamic ConvertToType(string value, Type type)
         {
             if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
@@ -39,13 +62,43 @@ namespace Model_Loader.Infrastructure
         }
 
         /// <summary>
+        /// Converts from a IEnumerable<type> to string
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="parentClass"></param>
+        /// <returns></returns>
+        public string ConvertFromIEnumerableType<T>(IEnumerable<T> value)
+        {
+            if (value == null)
+            {
+                return "";
+            }
+            else if (!typeof(String).Equals(value.GetType()))
+            {
+                Type type = value.GetType().GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)).FirstOrDefault();
+                IEnumerable<MethodInfo> filteredMethodInfos = methodInfos.Where(x => (x.GetParameters()[0].ParameterType.Namespace + "." + x.GetParameters()[0].ParameterType.Name).StartsWith(type.Namespace + "." + type.Name) && !x.Name.EndsWith("Type"));
+
+                if (filteredMethodInfos.Count(x => true) > 0)
+                {
+
+                    MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIEnumerable").MakeGenericMethod(typeof(T));
+
+                    return (string)genericMethod.Invoke(this, new object[] { value });
+                }
+            }
+
+            return value.ToString();
+        }
+
+        /// <summary>
         /// Converts from a type to string
         /// </summary>
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="parentClass"></param>
         /// <returns></returns>
-        public string ConvertFromType(dynamic value, Type type)
+        public string ConvertFromType<T>(T value)
         {
             if (value == null)
             {
@@ -59,7 +112,7 @@ namespace Model_Loader.Infrastructure
                     return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value }).ToString();
                 }
             }
-            return value;
+            return "";
         }
 
         /// <summary>
@@ -73,16 +126,15 @@ namespace Model_Loader.Infrastructure
         /// </summary>
         /// <param name="stringList"></param>
         /// <returns></returns>
-        public List<T> ConvertToTypedListFromStringList<T>(List<string> stringList)
+        public IEnumerable<T> ConvertToTypedListFromStringList<T>(IEnumerable<string> stringList)
         {
-            Type type = typeof(T);
             List<T> list = new List<T>();
 
             if (stringList != null)
             {
                 foreach (string str in stringList)
                 {
-                    list.Add(ConvertToType(str, type));
+                    list.Add(ConvertToType<T>(str));
                 }
             }
 
@@ -91,7 +143,7 @@ namespace Model_Loader.Infrastructure
 
         private MethodInfo[] TrimMethodInfos(MethodInfo[] methodInfos)
         {
-            string[] names = new string[] { "ConvertToType", "ConvertToTypedListFromStringList", "Equals", "GetHashCode", "GetType", "ToString" };
+            string[] names = new string[] { "ConvertToType", "ConvertToTypedListFromStringList", "Equals", "GetHashCode", "GetType", "ToString", "ConvertFromIEnumerableHelper" };
             return methodInfos.Where(x => !names.Contains(x.Name)).ToArray();
         }
 
@@ -276,9 +328,14 @@ namespace Model_Loader.Infrastructure
             return value;
         }
 
-        public virtual string ConvertFromList(List<dynamic> value)
+        public virtual string ConvertFromIEnumerable<T>(IEnumerable<T> value)
         {
-            return String.Join(",", value);
+            string str = "";
+            foreach (var val in value)
+            {
+                str += ConvertFromType(val) + ",";
+            }
+            return str.TrimEnd(',');
         }
 
         public virtual string ConvertFromDateTime(DateTime value)

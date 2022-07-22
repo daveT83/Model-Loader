@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Model_Loader.Infrastructure
@@ -135,11 +136,11 @@ namespace Model_Loader.Infrastructure
         /// <param name="parentclass"></param>
         /// <param name="typeConverter"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> CreateFromModel(Object model, Type type, dynamic typeConverter)
+        public static Dictionary<string, string> CreateFromModel<T>(Object model, TypeConverter typeConverter)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
-            PropertyInfo[] properties = type.GetProperties();
+            PropertyInfo[] properties = typeof(T).GetProperties();
 
             foreach (PropertyInfo propertyInfo in properties)
             {
@@ -149,11 +150,30 @@ namespace Model_Loader.Infrastructure
                 }
                 else
                 {
-                    dict.Add(propertyInfo.Name, typeConverter.ConvertFromType(propertyInfo.GetValue(model), propertyInfo.PropertyType));
+                    if (propertyInfo.PropertyType.GetGenericArguments().Length > 0 && propertyInfo.PropertyType.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        MethodInfo genericMethod = typeConverter.GetType().GetMethod("ConvertFromIEnumerableType").MakeGenericMethod(propertyInfo.PropertyType.GetGenericArguments()[0]);
+
+                        dict.Add(propertyInfo.Name, (string)genericMethod.Invoke(typeConverter, new object[] { propertyInfo.GetValue(model) }));
+                    }
+                    else
+                    {
+                        dict.Add(propertyInfo.Name, typeConverter.ConvertFromType<dynamic>(propertyInfo.GetValue(model)));
+                    }
                 }
             }
 
             return dict;
+        }
+
+        private static IEnumerable<dynamic> GetIEnumerable(PropertyInfo property, dynamic model)
+        {
+            return property.GetValue(model);
+        }
+
+        private static List<dynamic> GetList(dynamic model)
+        {
+            return model;
         }
 
         /// <summary>

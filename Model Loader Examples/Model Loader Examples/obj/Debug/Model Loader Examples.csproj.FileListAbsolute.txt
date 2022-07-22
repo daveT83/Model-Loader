@@ -1,7 +1,6 @@
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader Examples.exe.config
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader Examples.exe
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader Examples.pdb
-C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader.dll
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader.pdb
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debug\Model Loader Examples.csproj.AssemblyReference.cache
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debug\Model Loader Examples.csproj.SuggestedBindingRedirects.cache
@@ -9,3 +8,4 @@ C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debu
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debug\Model Loader Examples.csproj.CopyComplete
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debug\Model Loader Examples.exe
 C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\obj\Debug\Model Loader Examples.pdb
+C:\Users\davet\source\repos\Model Loader Examples\Model Loader Examples\bin\Debug\Model Loader.dll
