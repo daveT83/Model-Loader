@@ -12,25 +12,23 @@ For an example please see the included example project. For a quick overview, pl
 This has support for all built in types for c#, but if you need to add additional types you can extend the TypeConverter class to add your own conversions from a string value to another ```Type```. Best practice would be to follow the existing naming convention of ```public Type ConvertToType(string value)``` and ```public string ConvertFromType(Type value)```. Please see a list below for a list of all supported types.
   
 ## Supported Types:
-  - bool
-  - byte[]
-  - byte
-  - sbyte
-  - char[]
-  - char
-  - decimal
-  - double
-  - float
-  - int
-  - ~~nint~~
-  - uint
-  - ~~nuint~~
-  - long
-  - short
-  - ushort
-  - string
+  - ```bool```
+  - ```byte```
+  - ```sbyte```
+  - ```char```
+  - ```decimal```
+  - ```double```
+  - ```float```
+  - ```int```
+  - ```uint```
+  - ```long```
+  - ```short```
+  - ```ushort```
+  - ```string```
+  - ```T[]```
   - ```IEnumerable<T>```
-  - DateTime
+  - ```IDictionary<T,U>```
+  - ```DateTime```
   
 ## What should I download?
   - If you want to download the source code and/or examples you can download them [here](https://github.com/daveT83/Model-Loader/archive/refs/heads/main.zip).
