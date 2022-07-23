@@ -22,6 +22,14 @@ namespace Model_Loader_Examples.Models
         public short ShortExample { get; set; }
         public ushort UShortExample { get; set; }
         public List<int> ListExample { get; set; }
+        public List<List<int>> ListListExample { get; set; }
+        public List<Dictionary<int, string>> ListDictionaryExample { get; set; }
+
+        public Dictionary<int, string> DictionaryExample { get; set; }
+
+        public Dictionary<List<int>, Dictionary<int, string>> DictionaryListDictionaryExample { get; set; }
+
+
         public DateTime DateTimeExample { get; set; }
     }
 }

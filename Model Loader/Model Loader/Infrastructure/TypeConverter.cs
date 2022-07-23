@@ -18,9 +18,10 @@ namespace Model_Loader.Infrastructure
         /// <summary>
         /// Converts a string to the appropriate type.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="type"></param>
         /// <returns></returns>
+        /// 
         public T ConvertToType<T>(string value)
         {
             if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
@@ -29,43 +30,81 @@ namespace Model_Loader.Infrastructure
             }
             else if (!typeof(T).Equals(value.GetType()))
             {
-                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.ReturnType.Name.Equals(typeof(T).Name)).ToList();
-                if (filteredMethodInfos.Count > 0)
+                if (typeof(T).IsArray)
                 {
-                    return (T)filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
+                    MethodInfo genericMethod = this.GetType().GetMethod("ConvertToArray").MakeGenericMethod(typeof(T).GetElementType());
+
+                    return (T)genericMethod.Invoke(this, new object[] { value });
+                }
+                else
+                {
+                    List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.ReturnType.Name.Equals(typeof(T).Name)).ToList();
+                    if (filteredMethodInfos.Count > 0)
+                    {
+                        return (T)filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
+                    }
                 }
             }
+            else
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+
             return default(T);
         }
 
         /// <summary>
-        /// Converts a string to the appropriate type.
+        /// Converts a string to IEnumerable type.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="type"></param>
         /// <returns></returns>
-        public dynamic ConvertToType(string value, Type type)
+        public IEnumerable<T> ConvertToIEnumerableType<T>(string value)
         {
             if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
             {
-                return null;
+                return default(IEnumerable<T>);
             }
-            else if (!type.Equals(value.GetType()))
+            Type type = typeof(IEnumerable<>);
+            IEnumerable<MethodInfo> filteredMethodInfos = methodInfos.Where(x => (x.ReturnType.Namespace + "." + x.ReturnType.Name).StartsWith(type.Namespace + "." + type.Name) && !x.Name.EndsWith("Type"));
+
+            if (filteredMethodInfos.Count(x => true) > 0)
             {
-                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.ReturnType.Name.Equals(type.Name)).ToList();
-                if (filteredMethodInfos.Count > 0)
-                {
-                    return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value });
-                }
+                MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIEnumerable").MakeGenericMethod(typeof(T));
+
+                return (IEnumerable<T>)genericMethod.Invoke(this, new object[] { value });
             }
-            return value;
+            return default(IEnumerable<T>);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public IDictionary<T, U> ConvertToIDictionaryType<T, U>(string value)
+        {
+            if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
+            {
+                return default(IDictionary<T, U>);
+            }
+            Type type = typeof(IDictionary<,>);
+            IEnumerable<MethodInfo> filteredMethodInfos = methodInfos.Where(x => (x.ReturnType.Namespace + "." + x.ReturnType.Name).StartsWith(type.Namespace + "." + type.Name) && !x.Name.EndsWith("Type"));
+
+            if (filteredMethodInfos.Count(x => true) > 0)
+            {
+                return ConvertToIDictionary<T, U>(value);
+            }
+            return default(IDictionary<T, U>);
         }
 
         /// <summary>
         /// Converts from a IEnumerable<type> to string
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="type"></param>
         /// <param name="parentClass"></param>
         /// <returns></returns>
         public string ConvertFromIEnumerableType<T>(IEnumerable<T> value)
@@ -74,7 +113,7 @@ namespace Model_Loader.Infrastructure
             {
                 return "";
             }
-            else if (!typeof(String).Equals(value.GetType()))
+            else
             {
                 Type type = value.GetType().GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)).FirstOrDefault();
                 IEnumerable<MethodInfo> filteredMethodInfos = methodInfos.Where(x => (x.GetParameters()[0].ParameterType.Namespace + "." + x.GetParameters()[0].ParameterType.Name).StartsWith(type.Namespace + "." + type.Name) && !x.Name.EndsWith("Type"));
@@ -92,10 +131,41 @@ namespace Model_Loader.Infrastructure
         }
 
         /// <summary>
+        /// Converts from a IDictionary<T,U> to string
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="parentClass"></param>
+        /// <returns></returns>
+        public string ConvertFromIDictionaryType<T, U>(IDictionary<T, U> value)
+        {
+            if (value == null)
+            {
+                return "";
+            }
+            else
+            {
+                Type type = value.GetType().GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)).FirstOrDefault();
+                IEnumerable<MethodInfo> filteredMethodInfos = methodInfos.Where(x => (x.GetParameters()[0].ParameterType.Namespace + "." + x.GetParameters()[0].ParameterType.Name).StartsWith(type.Namespace + "." + type.Name) && !x.Name.EndsWith("Type"));
+
+                if (filteredMethodInfos.Count(x => true) > 0)
+                {
+
+                    MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIDictionary").MakeGenericMethod(typeof(T), typeof(U));
+
+                    return (string)genericMethod.Invoke(this, new object[] { value });
+                }
+            }
+
+            return value.ToString();
+        }
+
+        /// <summary>
         /// Converts from a type to string
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="type"></param>
         /// <param name="parentClass"></param>
         /// <returns></returns>
         public string ConvertFromType<T>(T value)
@@ -104,13 +174,27 @@ namespace Model_Loader.Infrastructure
             {
                 return "";
             }
+
             else if (!typeof(String).Equals(value.GetType()))
             {
-                List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.GetParameters()[0].ParameterType.Equals(value.GetType())).ToList();
-                if (filteredMethodInfos.Count > 0)
+                if (typeof(T).IsArray)
                 {
-                    return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value }).ToString();
+                    MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromArray").MakeGenericMethod(typeof(T).GetElementType());
+
+                    return (string)genericMethod.Invoke(this, new object[] { value });
                 }
+                else
+                {
+                    List<MethodInfo> filteredMethodInfos = methodInfos.Where(x => x.GetParameters()[0].ParameterType.Equals(value.GetType())).ToList();
+                    if (filteredMethodInfos.Count > 0)
+                    {
+                        return filteredMethodInfos[0].Invoke(Activator.CreateInstance(this.GetType()), new object[] { value }).ToString();
+                    }
+                }
+            }
+            else
+            {
+                return (string)Convert.ChangeType(value, typeof(string));
             }
             return "";
         }
@@ -120,27 +204,6 @@ namespace Model_Loader.Infrastructure
         /// </summary>
         /// <param name="methodInfos"></param>
         /// <returns></returns>
-
-        /// <summary>
-        /// Converts a List of string to a different type.
-        /// </summary>
-        /// <param name="stringList"></param>
-        /// <returns></returns>
-        public IEnumerable<T> ConvertToTypedListFromStringList<T>(IEnumerable<string> stringList)
-        {
-            List<T> list = new List<T>();
-
-            if (stringList != null)
-            {
-                foreach (string str in stringList)
-                {
-                    list.Add(ConvertToType<T>(str));
-                }
-            }
-
-            return list;
-        }
-
         private MethodInfo[] TrimMethodInfos(MethodInfo[] methodInfos)
         {
             string[] names = new string[] { "ConvertToType", "ConvertToTypedListFromStringList", "Equals", "GetHashCode", "GetType", "ToString", "ConvertFromIEnumerableHelper" };
@@ -152,11 +215,6 @@ namespace Model_Loader.Infrastructure
             return Convert.ToBoolean(value);
         }
 
-        public virtual byte[] ConvertToByteArray(string value)
-        {
-            return Encoding.UTF8.GetBytes(value);
-        }
-
         public virtual byte ConvertToByte(string value)
         {
             return Convert.ToByte(value);
@@ -165,11 +223,6 @@ namespace Model_Loader.Infrastructure
         public virtual sbyte ConvertToSbyte(string value)
         {
             return Convert.ToSByte(value);
-        }
-
-        public virtual char[] ConvertToCharArray(string value)
-        {
-            return value.ToCharArray();
         }
 
         public virtual char ConvertToChar(string value)
@@ -211,6 +264,7 @@ namespace Model_Loader.Infrastructure
         {
             return UInt64.Parse(value);
         }
+
         public virtual short ConvertToShort(string value)
         {
             return Int16.Parse(value);
@@ -226,16 +280,256 @@ namespace Model_Loader.Infrastructure
             return value;
         }
 
-        public virtual List<string> ConvertToList(string value)
+        public virtual T[] ConvertToArray<T>(string value)
         {
-            List<string> list = new List<string>();
+            return ConvertToIEnumerable<T>(value).ToArray();
+        }
 
-            foreach (string val in value.Split(','))
+        public virtual IEnumerable<T> ConvertToIEnumerable<T>(string value)
+        {
+            List<T> list = new List<T>();
+
+            foreach (string val in SplitIEnumerableElement(value))
             {
-                list.Add(val);
+                if (typeof(T).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        list.Add((T)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                    else if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIEnumerable").MakeGenericMethod(typeof(T).GetGenericArguments().Single());
+
+                        list.Add((T)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                }
+                else
+                {
+                    list.Add(ConvertToType<T>(val));
+                }
             }
 
             return list;
+        }
+
+        public virtual IDictionary<T, U> ConvertToIDictionary<T, U>(string value)
+        {
+            IDictionary<T, U> dict = new Dictionary<T, U>();
+            string[] strings = SplitIDictionary(value);
+            List<T> keyList = new List<T>();
+            List<U> valueList = new List<U>();
+
+            foreach (string val in SplitIDictionaryElement(strings[0]))
+            {
+                if (typeof(T).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        keyList.Add((T)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                    else if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIEnumerable").MakeGenericMethod(typeof(T).GetGenericArguments().Single());
+
+                        keyList.Add((T)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                }
+                else
+                {
+                    keyList.Add(ConvertToType<T>(val));
+                }
+            }
+
+            foreach (string val in SplitIDictionaryElement(strings[1]))
+            {
+                if (typeof(U).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(U).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(U).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        valueList.Add((U)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                    else if (typeof(U).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        Type[] generics = typeof(U).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertToIEnumerable").MakeGenericMethod(generics[0], generics[1]);
+
+                        valueList.Add((U)genericMethod.Invoke(this, new object[] { val }));
+                    }
+                }
+                else
+                {
+                    valueList.Add(ConvertToType<U>(val));
+                }
+            }
+
+            for (int i = 0; i < keyList.Count; i++)
+            {
+                dict.Add(keyList[i], valueList[i]);
+            }
+
+            return dict;
+
+        }
+
+        private IEnumerable<string> SplitIEnumerableElement(string value)
+        {
+            if (value.Count(x => x.Equals(':') || x.Equals('<')) == 0)
+            {
+                return value.Split(',');
+            }
+            List<string> elements = new List<string>();
+            int openArrowCount = 0;
+            int closeArrowCount = 0;
+            string str = "";
+
+
+            foreach (char c in value.ToCharArray())
+            {
+                if (c.Equals('<'))
+                {
+                    openArrowCount++;
+
+
+                }
+                else if (c.Equals('>'))
+                {
+                    closeArrowCount++;
+                }
+                else
+                {
+
+                    if (openArrowCount - 1 == closeArrowCount && c.Equals(','))
+                    {
+                        elements.Add(str.Trim());
+                        openArrowCount = 1;
+                        closeArrowCount = 0;
+                        str = "";
+                    }
+                    else if (openArrowCount != closeArrowCount)
+                    {
+                        str += c;
+                    }
+                }
+            }
+
+            if (!String.IsNullOrEmpty(str))
+            {
+                elements.Add(str);
+            }
+
+            return elements;
+        }
+
+        private IEnumerable<string> SplitIDictionaryElement(string value)
+        {
+            if (value.Count(x => x.Equals(':') || x.Equals('<')) == 0)
+            {
+                return value.Split(',');
+            }
+            List<string> elements = new List<string>();
+            int openArrowCount = 0;
+            int closeArrowCount = 0;
+            string str = "";
+
+
+            foreach (char c in value.ToCharArray())
+            {
+                if (c.Equals('<'))
+                {
+                    openArrowCount++;
+
+
+                }
+                else if (c.Equals('>'))
+                {
+                    closeArrowCount++;
+                }
+                else
+                {
+                    if (openArrowCount == closeArrowCount && c.Equals(':'))
+                    {
+                        elements.Add(str.Trim());
+                        openArrowCount = 0;
+                        closeArrowCount = 0;
+                        str = "";
+                    }
+                    else if (openArrowCount != closeArrowCount)
+                    {
+                        str += c;
+                    }
+                }
+            }
+
+            if (!String.IsNullOrEmpty(str))
+            {
+                elements.Add(str);
+            }
+
+            return elements;
+        }
+        private string[] SplitIDictionary(string value)
+        {
+            if (value.Count(x => x.Equals(':')) == 1)
+            {
+                return value.Split(':');
+            }
+            string[] split = new string[2] { "", "" };
+            int openArrowCount = 0;
+            int closeArrowCount = 0;
+            bool isLeftString = true;
+
+            foreach (char c in value.ToCharArray())
+            {
+                if (c.Equals('<'))
+                {
+
+                    if (openArrowCount == 1)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        openArrowCount++;
+                    }
+
+                }
+                else if (c.Equals('>'))
+                {
+                    closeArrowCount++;
+
+                    if (closeArrowCount > openArrowCount)
+                    {
+                        continue;
+                    }
+                }
+
+                if (openArrowCount == closeArrowCount && c.Equals(':'))
+                {
+                    openArrowCount = 0;
+                    closeArrowCount = 0;
+                    isLeftString = false;
+                }
+                else if (isLeftString)
+                {
+                    split[0] += c;
+                }
+                else
+                {
+                    split[1] += c;
+                }
+            }
+
+            return split;
         }
 
         public virtual DateTime ConvertToDateTime(string value)
@@ -248,11 +542,6 @@ namespace Model_Loader.Infrastructure
             return Convert.ToString(value);
         }
 
-        public virtual string ConvertFromByteArray(byte[] value)
-        {
-            return String.Join("", value);
-        }
-
         public virtual string ConvertFromByte(byte value)
         {
             return value.ToString();
@@ -261,17 +550,6 @@ namespace Model_Loader.Infrastructure
         public virtual string ConvertFromSbyte(sbyte value)
         {
             return value.ToString();
-        }
-
-        public virtual string ConvertFromCharArray(char[] value)
-        {
-            string chars = "";
-
-            foreach (char c in value)
-            {
-                chars += c;
-            }
-            return chars;
         }
 
         public virtual string ConvertFromChar(char value)
@@ -328,14 +606,101 @@ namespace Model_Loader.Infrastructure
             return value;
         }
 
+        public virtual string ConvertFromArray<T>(T[] value)
+        {
+            string array = ConvertFromIEnumerable<T>(value);
+            return array;
+        }
+
         public virtual string ConvertFromIEnumerable<T>(IEnumerable<T> value)
         {
-            string str = "";
+            string str = "<";
             foreach (var val in value)
             {
-                str += ConvertFromType(val) + ",";
+                if (typeof(T).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                    else if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIEnumerable").MakeGenericMethod(typeof(T).GetGenericArguments().Single());
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                }
+                else
+                {
+                    str += ConvertFromType<T>(val) + ",";
+                }
             }
-            return str.TrimEnd(',');
+            return str.TrimEnd(',') + ">";
+        }
+
+        public virtual string ConvertFromIDictionary<T, U>(IDictionary<T, U> value)
+        {
+            string str = "<";
+            foreach (var val in value.Keys)
+            {
+                if (typeof(T).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                    else if (typeof(T).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        Type[] generics = typeof(T).GetGenericArguments();
+
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIEnumerable").MakeGenericMethod(typeof(T).GetGenericArguments().Single());
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                }
+                else
+                {
+                    str += ConvertFromType<T>(val) + ",";
+                }
+            }
+
+            str = str.Trim(',') + ":";
+
+            foreach (var val in value.Values)
+            {
+                if (typeof(U).GetGenericArguments().Length > 0)
+                {
+                    if (typeof(U).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] generics = typeof(U).GetGenericArguments();
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIDictionary").MakeGenericMethod(generics[0], generics[1]);
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                    else if (typeof(U).GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        Type[] generics = typeof(U).GetGenericArguments();
+
+                        MethodInfo genericMethod = this.GetType().GetMethod("ConvertFromIEnumerable").MakeGenericMethod(typeof(T).GetGenericArguments().Single());
+
+                        str += genericMethod.Invoke(this, new object[] { val }) + ",";
+                    }
+                }
+                else
+                {
+                    str += ConvertFromType<U>(val) + ",";
+                }
+            }
+
+            return str.TrimEnd(',') + ">";
         }
 
         public virtual string ConvertFromDateTime(DateTime value)

@@ -28,19 +28,37 @@ namespace Model_Loader.Infrastructure
             {
                 Type type = property.PropertyType;
 
-                if (type.GetGenericArguments().Length > 0 && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                if (type.GetGenericArguments().Length > 0)
                 {
-                    MethodInfo genericMethod = Type_Converter.GetType().GetMethod("ConvertFromIEnumerableType").MakeGenericMethod(property.PropertyType.GetGenericArguments()[0]);
+                    if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] genericTypes = property.PropertyType.GetGenericArguments();
+                        MethodInfo genericMethod = Type_Converter.GetType().GetMethod("ConvertFromIDictionaryType").MakeGenericMethod(genericTypes[0], genericTypes[1]);
 
-                    if (isIncludePropertyNames)
-                    {
-                        modelString += property.Name + ": " + (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        if (isIncludePropertyNames)
+                        {
+                            modelString += property.Name + ": " + (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        }
+                        else
+                        {
+                            modelString += (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        }
+                        modelString += Environment.NewLine;
                     }
-                    else
+                    else if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
                     {
-                        modelString += (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        MethodInfo genericMethod = Type_Converter.GetType().GetMethod("ConvertFromIEnumerableType").MakeGenericMethod(property.PropertyType.GetGenericArguments()[0]);
+
+                        if (isIncludePropertyNames)
+                        {
+                            modelString += property.Name + ": " + (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        }
+                        else
+                        {
+                            modelString += (string)genericMethod.Invoke(Type_Converter, new object[] { property.GetValue(model) });
+                        }
+                        modelString += Environment.NewLine;
                     }
-                    modelString += Environment.NewLine;
                 }
                 else
                 {
@@ -125,17 +143,30 @@ namespace Model_Loader.Infrastructure
         /// <param name="fieldValue"></param>
         private void SetValue(PropertyInfo propertyInfo, object model, Type type, string fieldValue)
         {
+            MethodInfo generic;
 
-            if (type.GetGenericArguments().Length > 0 && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+            if (type.GetGenericArguments().Length > 0)
             {
-                MethodInfo generic = typeof(TypeConverter).GetMethod("ConvertToTypedListFromStringList").MakeGenericMethod(type.GetGenericArguments().Single());
+                if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                {
+                    Type[] genericTypes = type.GetGenericArguments();
+                    generic = typeof(TypeConverter).GetMethod("ConvertToIDictionaryType").MakeGenericMethod(genericTypes[0], genericTypes[1]);
 
+                    propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { fieldValue }));
+                }
+                else if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                {
+                    generic = typeof(TypeConverter).GetMethod("ConvertToIEnumerableType").MakeGenericMethod(type.GetGenericArguments().Single());
 
-                propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { Type_Converter.ConvertToType(fieldValue, type) }));
+                    propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { fieldValue }));
+                }
+
             }
             else
             {
-                propertyInfo.SetValue(model, Type_Converter.ConvertToType(fieldValue, type));
+                generic = typeof(TypeConverter).GetMethod("ConvertToType").MakeGenericMethod(type);
+
+                propertyInfo.SetValue(model, generic.Invoke(Type_Converter, new object[] { fieldValue }));
             }
         }
     }

@@ -142,8 +142,33 @@ namespace Model_Loader.Infrastructure
 
             PropertyInfo[] properties = typeof(T).GetProperties();
 
-            foreach (PropertyInfo propertyInfo in properties)
+            foreach (PropertyInfo property in properties)
             {
+                Type type = property.PropertyType;
+
+                if (type.GetGenericArguments().Length > 0)
+                {
+                    if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        Type[] genericTypes = property.PropertyType.GetGenericArguments();
+                        MethodInfo genericMethod = typeConverter.GetType().GetMethod("ConvertFromIDictionaryType").MakeGenericMethod(genericTypes[0], genericTypes[1]);
+
+                        dict.Add(property.Name, (string)genericMethod.Invoke(typeConverter, new object[] { property.GetValue(model) }));
+                    }
+                    else if (type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                    {
+                        MethodInfo genericMethod = typeConverter.GetType().GetMethod("ConvertFromIEnumerableType").MakeGenericMethod(property.PropertyType.GetGenericArguments()[0]);
+
+                        dict.Add(property.Name, (string)genericMethod.Invoke(typeConverter, new object[] { property.GetValue(model) }));
+                    }
+                }
+                else
+                {
+                    MethodInfo genericMethod = typeConverter.GetType().GetMethod("ConvertFromType").MakeGenericMethod(property.PropertyType);
+
+                    dict.Add(property.Name, (string)genericMethod.Invoke(typeConverter, new object[] { property.GetValue(model) }));
+                }
+                /*
                 if (propertyInfo.GetValue(model) == null)
                 {
                     dict.Add(propertyInfo.Name, "");
@@ -161,6 +186,7 @@ namespace Model_Loader.Infrastructure
                         dict.Add(propertyInfo.Name, typeConverter.ConvertFromType<dynamic>(propertyInfo.GetValue(model)));
                     }
                 }
+                */
             }
 
             return dict;

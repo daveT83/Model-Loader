@@ -19,6 +19,7 @@ namespace Model_Loader_Examples.Examples
                                                                 //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
             ModelLoader<ExampleModel> modelLoader = new ModelLoader<ExampleModel>(typeConverter); //typeof(ExampleModel) gets the type of the model we want to load the values into.
             ExampleModel model = modelLoader.LoadModel(arguementDictionary);    //Loads the values into the model
+
             Console.WriteLine(modelLoader.UnloadModel(model));
 
             return model;
@@ -57,6 +58,7 @@ namespace Model_Loader_Examples.Examples
             //Load the values into the dictionary
             TypeConverter typeConverter = new TypeConverter();  //you can extend this, but we only need the built in c# types
                                                                 //if you're unsure what types are included in this, please refer to /Models/ExampleModel.cs
+
 
             return DictionaryCreator.CreateFromModel<ExampleModel>(model, typeConverter);
         }

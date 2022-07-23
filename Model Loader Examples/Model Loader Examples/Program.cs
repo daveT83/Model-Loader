@@ -5,11 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model_Loader_Examples
 {
@@ -28,15 +23,15 @@ namespace Model_Loader_Examples
 
                 //Load from Arguements
                 string delimeter = ":";
-                string[] exampleArgs = { "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "char array test", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33","ListExample"+delimeter+"1,1,2,2,3,4,5,6","DateTimeExample"+delimeter+"01/02/2022" };
+                string[] exampleArgs = { "ListDictionaryExample: <<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>>", "ListListExample: <<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>>", "DictionaryListDictionaryExample" + delimeter + "<<1,1,2,2,3,4,5,6>:<1,2,3:one,two,three>>", "DictionaryExample" + delimeter + "1,2,3:one,two,three", "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "c,h,a,r, ,a,r,r,a,y, ,t,e,s,t", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33", "ListExample" + delimeter + "1,1,2,2,3,4,5,6", "DateTimeExample" + delimeter + "01/02/2022" };
 
                 sw.Restart();
 
                 ExampleModel exampleModelArguements = Example.LoadFromArguemnts(exampleArgs, delimeter);
 
                 sw.Stop();
-                Console.WriteLine("Load From Arguments: "+sw.ElapsedMilliseconds);
-                
+                Console.WriteLine("Load From Arguments: " + sw.ElapsedMilliseconds);
+
                 //--------------------------------------------------------------------------------------------------------------------
                 //Load from Flat Files
                 string path = AppDomain.CurrentDomain.BaseDirectory.Replace("bin\\Debug", "ExampleFiles");
@@ -78,10 +73,10 @@ namespace Model_Loader_Examples
                 sw.Restart();
 
 
-                Dictionary<string, string> exampleDictionary = Example.GetDictionaryFromModel(exampleModel);
+                Dictionary<string, string> exampleDictionary = Example.GetDictionaryFromModel(exampleModelArguements);
 
                 sw.Stop();
-                Console.WriteLine("Get Dictionary From Model: "+sw.ElapsedMilliseconds);
+                Console.WriteLine("Get Dictionary From Model: " + sw.ElapsedMilliseconds);
 
                 //--------------------------------------------------------------------------------------------------------------------
                 //Write to CSV file
@@ -89,7 +84,7 @@ namespace Model_Loader_Examples
                 List<ExampleModel> models = new List<ExampleModel>();
                 for (int i = 0; i < 5; i++)
                 {
-                    models.Add(exampleModel);
+                    models.Add(exampleModelArguements);
                 }
 
                 sw.Restart();
@@ -97,7 +92,7 @@ namespace Model_Loader_Examples
                 Example.WriteToFile(file, fileDelimeter, models);
 
                 sw.Stop();
-                Console.WriteLine("Write 5 Models to File: "+sw.ElapsedMilliseconds);
+                Console.WriteLine("Write 5 Models to File: " + sw.ElapsedMilliseconds);
 
                 //--------------------------------------------------------------------------------------------------------------------
                 //CustomTypeConverter
@@ -105,7 +100,7 @@ namespace Model_Loader_Examples
 
                 Example.OverridingTypeConverter();
                 sw.Stop();
-                Console.WriteLine("Overriding example: "+sw.ElapsedMilliseconds);
+                Console.WriteLine("Overriding example: " + sw.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
@@ -118,12 +113,12 @@ namespace Model_Loader_Examples
             string path = AppDomain.CurrentDomain.BaseDirectory.Replace("bin\\Debug", "ExampleFiles");
             string withQuotesFilePath = Path.Combine(path, "WithQuotes.csv");
             string delimeter = ":";
-            string[] exampleArgs = { "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "char array test", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33", "ListExample" + delimeter + "1,1,2,2,3,4,5,6", "DateTimeExample" + delimeter + "01/02/2022" };
+            string[] exampleArgs = { "ListDictionaryExample: <<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>,<1,2,3:one,two,three>>", "ListListExample: <<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>,<1,1,2,2,3,4,5,6>>", "DictionaryListDictionaryExample" + delimeter + "<<1,1,2,2,3,4,5,6>:<1,2,3:one,two,three>>", "DictionaryExample" + delimeter + "1,2,3:one,two,three", "IntExample" + delimeter + "1", "StringExample          " + delimeter + "     String Test          ", "BoolExample" + delimeter + "false", "CharArrayExample" + delimeter + "c,h,a,r, ,a,r,r,a,y, ,t,e,s,t", "CharExample" + delimeter + "a", "DecimalExample" + delimeter + "2.11", "DoubleExample" + delimeter + "5.55555", "FloatExample" + delimeter + "9.876", "UIntExample" + delimeter + "69", "LongExample" + delimeter + "10000", "ULongExample" + delimeter + "1111111", "ShortExample" + delimeter + "30", "UShortExample" + delimeter + "33", "ListExample" + delimeter + "1,1,2,2,3,4,5,6", "DateTimeExample" + delimeter + "01/02/2022" };
 
             Example.LoadFromArguemnts(exampleArgs, delimeter);
             Example.LoadFromFile(withQuotesFilePath, ':');
             Example.GetDictionaryFromModel(new ExampleModel());
-            Example.WriteToFile(@"C:\Users\davet\Desktop\Test.csv", ':', new List<ExampleModel>() { new ExampleModel()});
+            Example.WriteToFile(@"C:\Users\davet\Desktop\Test.csv", ':', new List<ExampleModel>() { new ExampleModel() });
             Example.OverridingTypeConverter();
 
         }
