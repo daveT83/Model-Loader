@@ -8,9 +8,9 @@ namespace Model_Loader.Infrastructure
     public class ModelLoader<T>
     {
         public bool IsCaseSensitive { get; set; }
-        public TypeConverter Type_Converter { get; private set; }
+        public dynamic Type_Converter { get; private set; }
 
-        public ModelLoader(TypeConverter typeConverter)
+        public ModelLoader(dynamic typeConverter)
         {
             IsCaseSensitive = false;
             Type_Converter = typeConverter;
