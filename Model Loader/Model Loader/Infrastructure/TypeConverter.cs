@@ -387,6 +387,7 @@ namespace Model_Loader.Infrastructure
             {
                 return value.Split(',');
             }
+
             List<string> elements = new List<string>();
             int openArrowCount = 0;
             int closeArrowCount = 0;
@@ -398,8 +399,6 @@ namespace Model_Loader.Infrastructure
                 if (c.Equals('<'))
                 {
                     openArrowCount++;
-
-
                 }
                 else if (c.Equals('>'))
                 {
@@ -425,6 +424,11 @@ namespace Model_Loader.Infrastructure
             if (!String.IsNullOrEmpty(str))
             {
                 elements.Add(str);
+            }
+
+            if (elements.Count == 0)
+            {
+                return value.Split(',');
             }
 
             return elements;
@@ -473,6 +477,11 @@ namespace Model_Loader.Infrastructure
             if (!String.IsNullOrEmpty(str))
             {
                 elements.Add(str);
+            }
+
+            if (elements.Count == 0)
+            {
+                return value.Split(',');
             }
 
             return elements;
