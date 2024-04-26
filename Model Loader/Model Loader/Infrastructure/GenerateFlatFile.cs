@@ -19,7 +19,7 @@ namespace Model_Loader.Infrastructure
         /// <param name="isHaveHeaders"></param>
         /// <param name="isHaveQuotes"></param>
         /// <returns></returns>
-        public static List<string> WriteToFile<T>(string filePath, char delimeter, dynamic typeConverter, IEnumerable<T> mods, bool isHaveHeaders = true, bool isHaveQuotes = true)
+        public static List<string> WriteToFile<T>(string filePath, char delimeter, dynamic typeConverter, IEnumerable<T> mods, bool isHaveHeaders = true, bool isHaveQuotes = true, List<string> headers = null)
         {
             List<string> lines = new List<string>();
             List<T> models = mods.ToList();
@@ -30,12 +30,12 @@ namespace Model_Loader.Infrastructure
                 {
                     if (isHaveHeaders)
                     {
-                        sw.WriteLine(GenerateHeaders(DictionaryCreator.CreateFromModel<T>(models[0], typeConverter), delimeter));
+                        sw.WriteLine(GenerateHeaders(DictionaryCreator.CreateFromModel<T>(models[0], typeConverter), delimeter, headers));
                     }
 
                     foreach (Object model in models)
                     {
-                        sw.WriteLine(GenerateLine(DictionaryCreator.CreateFromModel<T>(model, typeConverter), delimeter, isHaveQuotes));
+                        sw.WriteLine(GenerateLine(DictionaryCreator.CreateFromModel<T>(model, typeConverter), delimeter, isHaveQuotes, headers));
                     }
                 }
             }
@@ -81,13 +81,16 @@ namespace Model_Loader.Infrastructure
         /// <param name="dict"></param>
         /// <param name="delimeter"></param>
         /// <returns></returns>
-        private static string GenerateHeaders(Dictionary<string, string> dict, char delimeter)
+        private static string GenerateHeaders(Dictionary<string, string> dict, char delimeter, List<string> headers = null)
         {
             string line = "";
 
             foreach (string key in dict.Keys)
             {
-                line += key + delimeter;
+                if (headers == null || headers.Contains(key))
+                {
+                    line += key + delimeter;
+                }
             }
 
             return line.TrimEnd(delimeter);
@@ -99,19 +102,22 @@ namespace Model_Loader.Infrastructure
         /// <param name="dict"></param>
         /// <param name="delimeter"></param>
         /// <returns></returns>
-        private static string GenerateLine(Dictionary<string, string> dict, char delimeter, bool isQuotes)
+        private static string GenerateLine(Dictionary<string, string> dict, char delimeter, bool isQuotes, List<string> headers = null)
         {
             string line = "";
 
             foreach (string key in dict.Keys)
             {
-                if (isQuotes)
+                if (headers == null || headers.Contains(key))
                 {
-                    line += '"' + dict[key] + '"' + delimeter;
-                }
-                else
-                {
-                    line += dict[key] + delimeter;
+                    if (isQuotes)
+                    {
+                        line += '"' + dict[key] + '"' + delimeter;
+                    }
+                    else
+                    {
+                        line += dict[key] + delimeter;
+                    }
                 }
             }
 
